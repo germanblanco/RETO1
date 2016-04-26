@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
+<tsung loglevel="notice" version="1.0">
+
+  <!-- Client side setup -->
+  <clients>
+    <client host="localhost" use_controller_vm="true"/>
+  </clients>
+  
+  <!-- Server side setup -->
+  <servers>
+    <server host="reto1server" port="80" type="tcp"></server>
+  </servers>
+
+  <load duration="10" unit="minute">
+   <arrivalphase phase="1" duration="10" unit="minute">
+     <users arrivalrate="10" unit="second"></users>
+   </arrivalphase>
+  </load>
+
+ <sessions>
+  <session name="http-example" probability="100" type="ts_http">
+
+    <for from="1" to="10" incr="1" var="counter">
+      <request>
+        <http url="/" method="POST" version="1.1" contents="value=%%_counter%%"></http>
+      </request>
+    </for>
+    
+  </session>
+ </sessions>
+</tsung>
