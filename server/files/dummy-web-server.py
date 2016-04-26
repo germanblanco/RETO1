@@ -50,7 +50,7 @@ class S(BaseHTTPRequestHandler):
                   passwd="passwd",
                   db="reto1")
         x = mysql_conn.cursor()
-        x.execute("""INSERT INTO reto1 VALUES (%s)""", (postvars.get("value")))
+        x.execute("""INSERT INTO reto1 VALUES (%s, now())""", (postvars.get("value")))
         mysql_conn.commit()
         self._set_headers()
         self.wfile.write("<html><body><h1>POST!</h1></body></html>")
