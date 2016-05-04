@@ -21,7 +21,7 @@
  <sessions>
   <session name="http-example" probability="100" type="ts_http">
 
-    <for from="1" to="10" incr="1" var="counter">
+    <for from="1" to="100" incr="1" var="counter">
       <request>
         <http url="/" method="POST" version="1.1" contents="value=%%_counter%%"></http>
       </request>

@@ -16,6 +16,13 @@ from urlparse import parse_qs
 import SocketServer
 import MySQLdb
 
+mysql_conn = MySQLdb.connect(host= "reto1db",
+                  user="root",
+                  passwd="passwd",
+                  db="reto1")
+x = mysql_conn.cursor()
+line_number = 0
+
 class S(BaseHTTPRequestHandler):
     def parse_POST(self):
         ctype, pdict = parse_header(self.headers['content-type'])
@@ -44,14 +51,15 @@ class S(BaseHTTPRequestHandler):
         
     def do_POST(self):
         # Inserts posted data in MySQL server
+        global mysql_conn
+        global x
+        global line_number
         postvars = self.parse_POST()
-        mysql_conn = MySQLdb.connect(host= "reto1db",
-                  user="root",
-                  passwd="passwd",
-                  db="reto1")
-        x = mysql_conn.cursor()
         x.execute("""INSERT INTO reto1 VALUES (%s, now())""", (postvars.get("value")))
-        mysql_conn.commit()
+        line_number += 1
+        if line_number == 20:
+            mysql_conn.commit()
+            line_number = 0
         self._set_headers()
         self.wfile.write("<html><body><h1>POST!</h1></body></html>")
         
