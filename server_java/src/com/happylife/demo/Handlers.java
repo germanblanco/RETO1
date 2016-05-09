@@ -17,44 +17,11 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
-
 public class Handlers {
 	public static class DbPostHandler implements HttpHandler {
 
-		private String db;
-
-		public DbPostHandler(String db) {
-			try {
-				// The newInstance() call is a work around for some
-				// broken Java implementations
-
-				Class.forName("com.mysql.jdbc.Driver").newInstance();
-			} catch (Exception ex) {
-				System.out.println("Driver not found!!!");
-			}
-			this.db = db;
+		public void DbPostHandler() {
 		}
-
-		private Connection getConnection() {
-			Connection conn = null;
-			try {
-				conn = DriverManager.getConnection("jdbc:mysql://" + this.db + "/reto1?" +
-                                   "user=root&password=passwd");
-
-			} catch (SQLException ex) {
-				// handle any errors
-				System.out.println("SQLException: " + ex.getMessage());
-				System.out.println("SQLState: " + ex.getSQLState());
-				System.out.println("VendorError: " + ex.getErrorCode());
-			}
-			return conn;
-		}
-
 
 		@Override
 		public void handle(HttpExchange he) throws IOException {
@@ -66,17 +33,15 @@ public class Handlers {
 			String query = br.readLine();
 			parseQuery(query, parameters);
 
-			String value = (String)parameters.get("value");
+
+//			String value = (String)parameters.get("value");
+
+			String value = Long.toString(System.currentTimeMillis());
 
 			try {
-				Connection conn = getConnection();
-				Statement stmt = conn.createStatement();
-				stmt.executeUpdate("INSERT INTO reto1 VALUES (" + value + ", now())");
-				stmt.close();
-				conn.close();
-				System.out.println("Value inserted.");
+				MyQueue.push(Integer.parseInt(value));
 			}
-			catch (SQLException e) {
+			catch (InterruptedException e) {
 				System.out.println(e.getMessage());
 			}
 
