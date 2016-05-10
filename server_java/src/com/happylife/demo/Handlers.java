@@ -33,9 +33,13 @@ public class Handlers {
 			BufferedReader br = new BufferedReader(isr);
 			String query = br.readLine();
 			parseQuery(query, parameters);
-			String value = Long.toString(System.currentTimeMillis());
 
-			System.out.println(value);
+			try {
+				MyQueue.push(System.currentTimeMillis());
+			}
+			catch (InterruptedException e) {
+				System.err.println(e.getMessage());
+			}
 
 			// send response
 			he.sendResponseHeaders(200, 0);

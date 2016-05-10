@@ -42,7 +42,7 @@ public class InsertThread extends Thread {
 		while (true) {
 
 			try {
-				String value = buffer.readLine();
+				String value = Long.toString(MyQueue.pop());
 
 				Connection conn = getConnection();
 				Statement stmt = conn.createStatement();
@@ -53,7 +53,7 @@ public class InsertThread extends Thread {
 			catch (SQLException e) {
 				System.err.println(e.getMessage());
 			}
-			catch (IOException e) {
+			catch (InterruptedException e) {
 				System.err.println(e.getMessage());
 			}
 		}
@@ -62,6 +62,6 @@ public class InsertThread extends Thread {
 	public static void main(String[] args) {
 		// start thread to do db inserts
 		InsertThread it = new InsertThread(args[0]);
-        it.start();
+		it.start();
 	}
 }
