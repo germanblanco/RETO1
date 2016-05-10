@@ -27,17 +27,17 @@ public class SimpleHttpServer {
 		try {
 			this.port = 80;
 			server = HttpServer.create(new InetSocketAddress(port), 0);
-			System.out.println("server started at " + port);
+			System.err.println("server started at " + port);
 			server.createContext("/", new Handlers.DbPostHandler());
 			server.setExecutor(null);
 			server.start();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 	}
 
 	public void Stop() {
 		server.stop(0);
-		System.out.println("server stopped");
+		System.err.println("server stopped");
 	}
 }

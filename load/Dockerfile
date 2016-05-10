@@ -1,6 +1,6 @@
 FROM alpine:latest
 MAINTAINER German Blanco
-RUN apk add --update mysql-client erlang erlang-inets erlang-ssl gcc make bash && \
+RUN apk add --update mysql-client erlang erlang-inets erlang-ssl erlang-os-mon gcc make bash && \
     apk add --update erlang-crypto erlang-xmerl erlang-public-key erlang-dev erlang-parsetools && \
     rm -rf /var/cache/apk/* && \
     mkdir /src && \

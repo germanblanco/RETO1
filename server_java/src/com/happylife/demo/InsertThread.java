@@ -1,5 +1,9 @@
 package com.happylife.demo;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.DriverManager;
@@ -13,7 +17,7 @@ public class InsertThread extends Thread {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 		} catch (Exception ex) {
-			System.out.println("Driver not found!!!");
+			System.err.println("Driver not found!!!");
 		}
 		this.db = db;
 	}
@@ -26,32 +30,38 @@ public class InsertThread extends Thread {
 
 		} catch (SQLException ex) {
 			// handle any errors
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
+			System.err.println("SQLException: " + ex.getMessage());
+			System.err.println("SQLState: " + ex.getSQLState());
+			System.err.println("VendorError: " + ex.getErrorCode());
 		}
 		return conn;
 	}
 
 	public void run() {
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
 
 			try {
-				int value = MyQueue.pop();
+				String value = buffer.readLine();
 
 				Connection conn = getConnection();
 				Statement stmt = conn.createStatement();
 				stmt.executeUpdate("INSERT INTO reto1 VALUES (" + value + ", now())");
 				stmt.close();
 				conn.close();
-				System.out.println("Value inserted.");
 			}
 			catch (SQLException e) {
-				System.out.println(e.getMessage());
+				System.err.println(e.getMessage());
 			}
-			catch (InterruptedException e) {
-				System.out.println(e.getMessage());
+			catch (IOException e) {
+				System.err.println(e.getMessage());
 			}
 		}
-    }
+	}
+
+	public static void main(String[] args) {
+		// start thread to do db inserts
+		InsertThread it = new InsertThread(args[0]);
+        it.start();
+	}
 }

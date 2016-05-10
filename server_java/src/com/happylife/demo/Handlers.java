@@ -20,30 +20,22 @@ import com.sun.net.httpserver.HttpHandler;
 public class Handlers {
 	public static class DbPostHandler implements HttpHandler {
 
+		private static int iterator = 0;
+
 		public void DbPostHandler() {
 		}
 
 		@Override
 		public void handle(HttpExchange he) throws IOException {
-			System.out.println("Served by /dbPost handler...");
 			// parse request
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String query = br.readLine();
 			parseQuery(query, parameters);
-
-
-//			String value = (String)parameters.get("value");
-
 			String value = Long.toString(System.currentTimeMillis());
 
-			try {
-				MyQueue.push(Integer.parseInt(value));
-			}
-			catch (InterruptedException e) {
-				System.out.println(e.getMessage());
-			}
+			System.out.println(value);
 
 			// send response
 			he.sendResponseHeaders(200, 0);
