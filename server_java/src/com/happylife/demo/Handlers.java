@@ -13,6 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -21,8 +26,30 @@ public class Handlers {
 	public static class DbPostHandler implements HttpHandler {
 
 		private static int iterator = 0;
+		private Connection conn = null;
 
 		public void DbPostHandler() {
+			try {
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+			} catch (Exception ex) {
+				System.err.println("Driver not found!!!");
+			}
+			Connection conn = getConnection();
+		}
+
+		private Connection getConnection() {
+			Connection conn = null;
+			try {
+				conn = DriverManager.getConnection("jdbc:mysql://" + "reto1db" + "/reto1?" +
+	                               "user=root&password=passwd");
+
+			} catch (SQLException ex) {
+				// handle any errors
+				System.err.println("SQLException: " + ex.getMessage());
+				System.err.println("SQLState: " + ex.getSQLState());
+				System.err.println("VendorError: " + ex.getErrorCode());
+			}
+			return conn;
 		}
 
 		@Override
@@ -35,10 +62,14 @@ public class Handlers {
 			parseQuery(query, parameters);
 
 			try {
-				MyQueue.push(System.currentTimeMillis());
-			}
-			catch (InterruptedException e) {
-				System.err.println(e.getMessage());
+				Statement stmt = conn.createStatement();
+				stmt.executeUpdate("INSERT INTO reto1 VALUES (" + System.currentTimeMillis() + ", now())");
+				stmt.close();
+			} catch (SQLException ex) {
+				// handle any errors
+				System.err.println("SQLException: " + ex.getMessage());
+				System.err.println("SQLState: " + ex.getSQLState());
+				System.err.println("VendorError: " + ex.getErrorCode());
 			}
 
 			// send response
